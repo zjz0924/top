@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.TaskRecordDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.TaskRecord">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="a_id" property="aId" jdbcType="BIGINT" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="task_type" property="taskType" jdbcType="INTEGER" />
+		<association property="account" javaType="cn.wow.common.domain.Account" column="a_id" select="cn.wow.common.dao.AccountDao.selectOne"/> 
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, code, a_id, state, remark, create_time, task_type
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from task_record where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from task_record where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.TaskRecord">
+		insert into task_record (code, a_id, state, remark, create_time, task_type)
+			values (#{code,jdbcType=VARCHAR}, #{aId,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{taskType,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.TaskRecord">
+		update task_record
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="aId != null">
+				a_id = #{aId,jdbcType=BIGINT},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskType != null">
+				task_type = #{taskType,jdbcType=INTEGER},
+			</if>
+			
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from task_record
+	     <where>
+		      <if test="code != null">
+				and code = #{code,jdbcType=VARCHAR}
+			</if>
+			<if test="aId != null">
+				and a_id = #{aId,jdbcType=BIGINT}
+			</if>
+			<if test="state != null">
+				and state = #{state,jdbcType=INTEGER}
+			</if>
+			
+		      <if test="startCreateTime != null and startCreateTime != ''">  
+		    	and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		      <if test="endCreateTime != null and endCreateTime != ''">  
+		    	and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		      <if test="taskType != null">
+				and task_type = #{taskType,jdbcType=INTEGER}
+			</if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+	  <select id="selectTaskIdList" resultType="java.lang.Long" parameterType="java.lang.Long">
+	  	 select distinct t.id from task_record tr left join task t on tr.code = t.code where tr.a_id = #{id,jdbcType=BIGINT}
+	  </select>
+	
+</mapper>

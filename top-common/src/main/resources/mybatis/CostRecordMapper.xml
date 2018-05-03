@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.CostRecordDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.CostRecord">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="t_id" property="tId" jdbcType="BIGINT" />
+		<result column="a_id" property="aId" jdbcType="BIGINT" />
+		<result column="lab_id" property="labId" jdbcType="BIGINT" />
+		<result column="orgs" property="orgs" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+		<result column="times" property="times" jdbcType="INTEGER" />
+		<result column="lab_type" property="labType" jdbcType="INTEGER" />
+		<result column="lab_result" property="labResult" jdbcType="INTEGER" />
+		
+		<association property="task" javaType="cn.wow.common.domain.Task" column="t_id" select="cn.wow.common.dao.TaskDao.selectOne"/> 
+	</resultMap>
+	
+	<sql id="base_columns">
+		c.id, c.t_id, c.a_id, c.lab_id, c.orgs, c.state, c.remark, c.create_time, c.times,
+		c.lab_type, c.lab_result, c.send_time
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from cost_record c left join task t on t.id = c.t_id where c.id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from cost_record where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.CostRecord">
+		insert into cost_record (t_id, a_id, lab_id, orgs, state, remark, create_time, times, lab_type, lab_result, send_time)
+		values (#{tId,jdbcType=BIGINT}, #{aId,jdbcType=BIGINT}, #{labId,jdbcType=BIGINT}, #{orgs,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{times,jdbcType=INTEGER}, #{labType,jdbcType=INTEGER}, 
+		#{labResult,jdbcType=INTEGER}, #{sendTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<insert id="batchAdd" parameterType="java.util.List">
+		insert into cost_record (t_id, a_id, lab_id, orgs, state, remark, create_time, times, lab_type, lab_result, send_time) values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.tId,jdbcType=BIGINT}, #{item.aId,jdbcType=BIGINT}, #{item.labId,jdbcType=BIGINT}, #{item.orgs,jdbcType=VARCHAR}, #{item.state,jdbcType=INTEGER},
+			 #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.times,jdbcType=INTEGER}, #{item.labType,jdbcType=INTEGER}, 
+			 #{item.labResult,jdbcType=INTEGER}, #{item.sendTime,jdbcType=TIMESTAMP})
+		</foreach>
+	</insert> 
+	
+	<update id="update" parameterType="cn.wow.common.domain.CostRecord">
+		update cost_record
+		<set>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=BIGINT},
+			</if>
+			<if test="aId != null">
+				a_id = #{aId,jdbcType=BIGINT},
+			</if>
+			<if test="labId != null">
+				lab_id = #{labId,jdbcType=BIGINT},
+			</if>
+			<if test="orgs != null">
+				orgs = #{orgs,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="times != null">
+				times = #{times,jdbcType=INTEGER},
+			</if>
+			<if test="labType != null">
+				lab_type = #{labType,jdbcType=INTEGER},
+			</if>
+			<if test="labResult != null">
+			 	lab_result = #{labResult,jdbcType=INTEGER},
+			</if>
+			<if test="sendTime != null">
+				send_time = #{sendTime,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from cost_record c left join task t on t.id = c.t_id
+	     <where>
+			<if test="tId != null">
+				and c.t_id = #{tId,jdbcType=BIGINT}
+			</if>
+			<if test="taskType != null">
+				and t.type = #{taskType,jdbcType=INTEGER}
+			</if>
+			<if test="code != null">
+				and t.code like concat('%', #{code,jdbcType=VARCHAR} ,'%')
+			</if>
+			<if test="aId != null">
+				and c.a_id = #{aId,jdbcType=BIGINT}
+			</if>
+			<if test="labId != null">
+				and c.lab_id = #{labId,jdbcType=BIGINT}
+			</if>
+			<if test="orgs != null">
+				and find_in_set(#{orgs,jdbcType=VARCHAR}, orgs)
+			</if>
+			<if test="state != null">
+				and c.state = #{state,jdbcType=INTEGER}
+			</if>
+			<if test="labResult != null">
+			 	and c.lab_result = #{labResult,jdbcType=INTEGER}
+			</if>
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and c.create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if> 
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and c.create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startSendTime != null and startSendTime != ''">
+				and c.send_time &gt;= #{startSendTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endSendTime != null and endSendTime != ''">
+				and c.send_time &lt;= #{endSendTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="labType != null">
+				and c.lab_type = #{labType,jdbcType=INTEGER}
+			</if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by c.id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+</mapper>

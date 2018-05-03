@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.PartsDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.Parts">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="org_id" property="orgId" jdbcType="BIGINT" />
+		<result column="is_key" property="isKey" jdbcType="INTEGER" />
+		<result column="key_code" property="keyCode" jdbcType="VARCHAR" />
+		<result column="pro_time" property="proTime" jdbcType="DATE" />
+		<result column="place" property="place" jdbcType="VARCHAR" />
+		<result column="pro_no" property="proNo" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="contacts" property="contacts" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<association property="org" javaType="cn.wow.common.domain.Org" column="org_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+	</resultMap>
+
+	<sql id="base_columns">
+		id, type, code, name, pro_time, place, pro_no, remark, create_time, state, org_id, is_key, key_code, contacts, phone
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from parts where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select <include refid="base_columns" /> from parts where code = #{code,jdbcType=VARCHAR} and state != 2
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from parts where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.Parts">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+			SELECT @@IDENTITY
+		</selectKey>
+		
+		insert into parts (type, code, name, pro_time, place, pro_no, remark, create_time, state, org_id, is_key, key_code, contacts, phone) values
+		(#{type,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{proTime,jdbcType=DATE}, #{place,jdbcType=VARCHAR}, 
+		#{proNo,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER},
+		#{orgId,jdbcType=BIGINT}, #{isKey,jdbcType=INTEGER}, #{keyCode,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.Parts">
+		update parts
+		<set>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="proTime != null">
+				pro_time = #{proTime,jdbcType=DATE},
+			</if>
+			<if test="place != null">
+				place = #{place,jdbcType=VARCHAR},
+			</if>
+			<if test="proNo != null">
+				pro_no = #{proNo,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="orgId != null" >
+		        org_id = #{orgId,jdbcType=BIGINT},
+		    </if>
+		    <if test="isKey != null" >
+		    	is_key = #{isKey,jdbcType=INTEGER},
+		    </if>
+		    <if test="keyCode != null" >
+		   	 	key_code = #{keyCode,jdbcType=VARCHAR},
+		    </if>
+		    <if test="contacts != null" >
+		    	contacts = #{contacts,jdbcType=VARCHAR}, 
+		    </if>
+		    <if test="phone != null" >
+		    	phone = #{phone,jdbcType=VARCHAR},
+		    </if>
+			remark = #{remark,jdbcType=VARCHAR}
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" /> from parts
+		<where>
+			<if test="code != null and code != ''">
+				and code = #{code,jdbcType=VARCHAR}
+			</if>
+	
+			<if test="qcode != null and qcode != ''">
+				and code like concat('%', #{qcode,jdbcType=VARCHAR}, '%')
+			</if>
+	
+			<if test="name != null and name != ''">
+				and name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+			</if>
+	
+			<if test="type != null and type != ''">
+				and type = #{type,jdbcType=INTEGER}
+			</if>
+	
+			<if test="state != null">
+				and state = #{state,jdbcType=INTEGER}
+			</if>
+			
+			 <if test="notstate != null">
+				and state != #{notstate,jdbcType=INTEGER}
+			 </if>
+			 
+			 <if test="contacts != null" >
+		    	and contacts like concat('%', #{contacts,jdbcType=VARCHAR}, '%')
+		    </if>
+		    <if test="phone != null" >
+		    	and phone like concat('%', #{phone,jdbcType=VARCHAR}, '%')
+		    </if>
+	
+			<if test="startProTime != null and startProTime != ''">
+				and pro_time &gt;= #{startProTime, jdbcType=DATE}
+			</if>
+	
+			<if test="endProTime != null and endProTime != ''">
+				and pro_time &lt;= #{endProTime, jdbcType=DATE}
+			</if>
+	
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+	
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+	
+			<if test="proNo != null and proNo != ''">
+				and pro_no like concat('%', #{proNo,jdbcType=VARCHAR}, '%')
+			</if>
+	
+			<if test="orgId != null">
+				and org_id = #{orgId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="isKey != null">
+				and is_key = #{isKey,jdbcType=INTEGER}
+			</if>
+			
+			<if test="keyCode != null">
+				and key_code like concat('%', #{keyCode,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="ekeyCode != null">
+				and key_code = #{ekeyCode,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="remark != null">
+				and remark = #{remark,jdbcType=VARCHAR}
+			 </if>
+			 
+			 <if test="eid != null">
+				and id != #{eid,jdbcType=BIGINT}
+			 </if>
+			 
+			 <if test="ename != null and ename != ''">
+				and name = #{ename,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="eproNo != null and eproNo != ''">
+				and pro_no = #{eproNo,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="eProTime != null and eProTime != ''">
+				and pro_time = #{eProTime, jdbcType=DATE}
+			</if>
+			
+			<if test="place != null">
+				and place = #{place,jdbcType=VARCHAR}
+			</if>
+			
+			 <if test="econtacts != null" >
+		    	and contacts = #{econtacts,jdbcType=VARCHAR}
+		    </if>
+		    <if test="ephone != null" >
+		    	and phone = #{ephone,jdbcType=VARCHAR}
+		    </if>
+		</where>
+	
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+	</select>
+
+</mapper>

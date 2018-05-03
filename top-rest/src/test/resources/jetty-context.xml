@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+	<Call name="setAttribute">
+		<Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+		<Arg>.*/.*jsp-api-[^/]\.jar$|./.*jsp-[^/]\.jar$|./.*taglibs[^/]*\.jar$</Arg>
+	</Call>
+	<!-- <Set name="maxFormContentSize">200000</Set> --><!-- http://wiki.eclipse.org/Jetty/Howto/Configure_Form_Size -->
+	<Set name="maxFormContentSize">900000</Set><!-- java.lang.IllegalStateException: Form too large 367602>200000 --><!-- tomcat  maxPostSize  default:2097152 (2 megabytes)  http://tomcat.apache.org/tomcat-5.5-doc/config/http.html -->
+</Configure>

@@ -1,0 +1,95 @@
+/*
+.place_page{text-align:center; margin:20px 0px; font-size:12px;}
+.place_page li{display:inline;}
+.place_page a{padding:3px 6px; border:1px solid #b5a492; color:#816444; display:inline-block; margin-right:5px; text-decoration:none;}
+.place_page a:hover{ text-decoration:underline;}
+.place_page a.current{background-color:#dfc6aa;}
+.place_page span{padding:3px 6px; border:1px solid #ccc; color:#CCC; margin-right:5px;display:inline-block;}
+.place_page span.current{color:#816444;background-color:#dfc6aa;border:1px solid #b5a492;}
+.place_page span.current{color:#816444;background-color:#dfc6aa;border:1px solid #b5a492;}
+.place_page span.bar_detail{ border:1px solid #999; color:#816444;padding: 2px 3px;}
+.place_page span.bar_detail .page_goto{height:13px;padding:0px;margin:0 1px;}
+.place_page span.bar_detail .button_go{padding:0px 6px;font-weight:bold;border:1px solid #999;}
+*/
+
+/*=========== 2012 skin ========*/
+.place_page:after {content: "."; display: block;height: 0; clear: both; visibility: hidden;} 
+.place_page { display:inline-block;} 
+/* Hide from IE Mac \*/ 
+.place_page {display:block;} 
+/* End hide from IE Mac */ 
+/* end of clearfix */ 
+
+.place_page{text-align:center; margin:20px 0px; font-size:15px;}
+.place_page li{display:inline;}
+.place_page a{padding:3px 6px; border:1px solid #b5a492; color:#816444; display:inline-block; margin-right:5px; text-decoration:none;}
+.place_page a:hover{ text-decoration:underline;}
+.place_page a.current{background-color:#dfc6aa;}
+.place_page span{padding:3px 6px; border:1px solid #ccc; color:#CCC; margin-right:5px;display:inline-block;}
+.place_page span.current{color:#816444;background-color:#dfc6aa;border:1px solid #b5a492;}
+.place_page span.current{color:#816444;background-color:#dfc6aa;border:1px solid #b5a492;}
+.place_page span.bar_detail{ border:1px solid #999; color:#816444;padding: 2px 3px;}
+.place_page span.bar_detail .page_goto{height:15px;padding:0px;margin:0 1px;}
+.place_page span.bar_detail .button_go{padding:0px 6px;font-weight:bold;border:1px solid #999;}
+/* 
+.place_page{text-align:right; font-size:12px; margin-top:5px;}
+.place_page li{display:inline;line-height: 15px;line-height: 15px;}
+.place_page a{padding:3px 5px; color:#3a3a3a; display:inline-block;text-decoration:none;}
+.place_page a:hover {color:#3a3a3a;text-decoration:underline;}
+.place_page a.current{background-color:#dfc6aa;}
+.place_page span{padding:3px 5px; color:#CCC;display:inline-block;}
+.place_page span.current, .place_page span.current:hover {font-weight:normal;color:#3a3a3a; text-decoration:underline;}
+.place_page span.ellipsis{border:0px;padding:0px 2px;margin:0 2px; color:#999;}
+.place_page span.bar_detail{ border: none;color: #666;}
+.place_page span.bar_detail .page_goto{height:13px;padding:0px;margin:0 1px;}
+.place_page span.bar_detail .button_go{padding:0px 6px;font-weight:bold;}
+ */ 
+ 
+ .pagination {
+	display: inline-block;
+	padding-left: 0;
+	margin: 20px 0;
+	border-radius: 4px
+}
+
+
+.pagination>li>a, .pagination>li>span {
+	position: relative;
+	float: left;
+	padding: 6px 12px;
+	margin-left: -1px;
+	line-height: 1.42857143;
+	color: #428bca;
+	text-decoration: none;
+	background-color: #fff;
+	border: 1px solid #ddd
+}
+
+.pagination>li>a:hover, .pagination>li>span:hover, .pagination>li>a:focus,
+	.pagination>li>span:focus {
+	color: #2a6496;
+	background-color: #eee;
+	border-color: #ddd
+}
+
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover,
+	.pagination>.active>span:hover, .pagination>.active>a:focus,
+	.pagination>.active>span:focus {
+	z-index: 2;
+	color: #fff;
+	cursor: default;
+	background-color: #428bca;
+	border-color: #428bca
+}
+
+.pagination>.disabled>span, .pagination>.disabled>span:hover,
+	.pagination>.disabled>span:focus, .pagination>.disabled>a, .pagination>.disabled>a:hover,
+	.pagination>.disabled>a:focus {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd
+}
+
+ 
+ 

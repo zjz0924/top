@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.TaskDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.Task">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="i_id" property="iId" jdbcType="BIGINT" />
+		<result column="a_id" property="aId" jdbcType="BIGINT" />
+		<result column="t_id" property="tId" jdbcType="BIGINT" />
+		<result column="org_id" property="orgId" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
+		<result column="fail_num" property="failNum" jdbcType="INTEGER" />
+		<result column="result" property="result" jdbcType="INTEGER" />
+		<result column="is_receive" property="isReceive" jdbcType="INTEGER" />
+		
+		<!-- 实验室ID -->
+		<result column="parts_atl_id" property="partsAtlId" jdbcType="BIGINT" />
+		<result column="mat_atl_id" property="matAtlId" jdbcType="BIGINT" />
+		<result column="parts_pat_id" property="partsPatId" jdbcType="BIGINT" />
+		<result column="mat_pat_id" property="matPatId" jdbcType="BIGINT" />
+		
+		<!-- 试验结果 -->
+		<result column="parts_atl_result" property="partsAtlResult" jdbcType="INTEGER" />
+		<result column="mat_atl_result" property="matAtlResult" jdbcType="INTEGER" />
+		<result column="parts_pat_result" property="partsPatResult" jdbcType="INTEGER" />
+		<result column="mat_pat_result" property="matPatResult" jdbcType="INTEGER" />
+		
+		<!-- 试验次数 -->
+		<result column="parts_atl_times" property="partsAtlTimes" jdbcType="INTEGER" />
+		<result column="mat_atl_times" property="matAtlTimes" jdbcType="INTEGER" />
+		<result column="parts_pat_times" property="partsPatTimes" jdbcType="INTEGER" />
+		<result column="mat_pat_times" property="matPatTimes" jdbcType="INTEGER" />
+		
+		<!-- 试验编号 -->
+		<result column="parts_atl_code" property="partsAtlCode" jdbcType="VARCHAR" />
+		<result column="mat_atl_code" property="matAtlCode" jdbcType="VARCHAR" />
+		<result column="parts_pat_code" property="partsPatCode" jdbcType="VARCHAR" />
+		<result column="mat_pat_code" property="matPatCode" jdbcType="VARCHAR" />
+		
+		<result column="info_apply" property="infoApply" jdbcType="INTEGER" />
+		<result column="result_apply" property="resultApply" jdbcType="INTEGER" />
+		
+		<association property="taskInfo" javaType="cn.wow.common.domain.TaskInfo" column="id" select="cn.wow.common.dao.TaskInfoDao.selectOne"/> 
+		<association property="partsAtl" javaType="cn.wow.common.domain.Org" column="parts_atl_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+		<association property="matAtl" javaType="cn.wow.common.domain.Org" column="mat_atl_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+		<association property="partsPat" javaType="cn.wow.common.domain.Org" column="parts_pat_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+		<association property="matPat" javaType="cn.wow.common.domain.Org" column="mat_pat_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+		<association property="info" javaType="cn.wow.common.domain.Info" column="i_id" select="cn.wow.common.dao.InfoDao.selectOne"/> 
+		<association property="account" javaType="cn.wow.common.domain.Account" column="a_id" select="cn.wow.common.dao.AccountDao.selectOne"/> 
+		<association property="org" javaType="cn.wow.common.domain.Org" column="org_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+	</resultMap>
+	
+	<sql id="base_columns">
+		t.id, t.code, t.i_id, t.org_id, t.type, t.state, t.parts_atl_id, t.mat_atl_id, t.parts_pat_id, t.mat_pat_id ,t.remark, t.create_time, t.fail_num, t.a_id, t.parts_atl_result, t.mat_atl_result,
+        t.parts_pat_result, t.mat_pat_result, t.parts_atl_times, t.mat_atl_times, t.parts_pat_times, t.mat_pat_times, t.confirm_time, t.info_apply, t.result_apply, t.t_id, t.result, t.is_receive,t.parts_atl_code,t.mat_atl_code,t.parts_pat_code,t.mat_pat_code
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from task t where t.id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from task
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.Task">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+			SELECT @@IDENTITY
+		</selectKey>
+	
+		insert into task (code, i_id, org_id, type, state, parts_atl_id, mat_atl_id, parts_pat_id, mat_pat_id, remark, create_time, fail_num, a_id, parts_atl_result, mat_atl_result, parts_pat_result, mat_pat_result, parts_atl_times, mat_atl_times, parts_pat_times, mat_pat_times, confirm_time, info_apply, result_apply, t_id, result, is_receive, parts_atl_code, mat_atl_code, parts_pat_code, mat_pat_code)
+			values (#{code,jdbcType=VARCHAR}, #{iId,jdbcType=BIGINT}, #{orgId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{state,jdbcType=INTEGER},
+					#{partsAtlId,jdbcType=BIGINT}, #{matAtlId,jdbcType=BIGINT}, #{partsPatId,jdbcType=BIGINT}, #{matPatId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+					#{failNum,jdbcType=INTEGER}, #{aId,jdbcType=BIGINT}, #{partsAtlResult,jdbcType=INTEGER}, #{matAtlResult,jdbcType=INTEGER}, #{partsPatResult,jdbcType=INTEGER}, #{matPatResult,jdbcType=INTEGER}, 
+					#{partsAtlTimes,jdbcType=INTEGER}, #{matAtlTimes,jdbcType=INTEGER}, #{partsPatTimes,jdbcType=INTEGER}, #{matPatTimes,jdbcType=INTEGER}, #{confirmTime,jdbcType=TIMESTAMP},
+					#{infoApply,jdbcType=INTEGER},#{resultApply,jdbcType=INTEGER}, #{tId,jdbcType=BIGINT}, #{result,jdbcType=INTEGER}, #{isReceive,jdbcType=INTEGER}, #{partsAtlCode,jdbcType=VARCHAR}, #{matAtlCode,jdbcType=VARCHAR}, #{partsPatCode,jdbcType=VARCHAR}, #{matPatCode,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.Task">
+		update task
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="iId != null">
+				i_id = #{iId,jdbcType=BIGINT},
+			</if>
+			<if test="aId != null">
+				a_id = #{aId,jdbcType=BIGINT},
+			</if>
+			<if test="orgId != null">
+				org_id = #{orgId,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+				parts_atl_id = #{partsAtlId,jdbcType=BIGINT},
+				mat_atl_id = #{matAtlId,jdbcType=BIGINT},
+				parts_pat_id = #{partsPatId,jdbcType=BIGINT},
+				mat_pat_id = #{matPatId,jdbcType=BIGINT},
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="failNum != null">
+				fail_num =  #{failNum,jdbcType=INTEGER},
+			</if>
+			<if test="partsAtlResult != null">
+				parts_atl_result = #{partsAtlResult,jdbcType=INTEGER},
+			</if>
+			<if test="matAtlResult != null">
+				mat_atl_result = #{matAtlResult,jdbcType=INTEGER},
+			</if>
+			<if test="partsPatResult != null">
+				parts_pat_result = #{partsPatResult,jdbcType=INTEGER},
+			</if>
+			<if test="matPatResult != null">
+				mat_pat_result = #{matPatResult,jdbcType=INTEGER},
+			</if>
+			<if test="partsAtlTimes != null">
+				parts_atl_times = #{partsAtlTimes,jdbcType=INTEGER}, 
+			</if>
+			<if test="matAtlTimes != null">
+				mat_atl_times = #{matAtlTimes,jdbcType=INTEGER}, 
+			</if>
+			<if test="partsPatTimes != null">
+				parts_pat_times = #{partsPatTimes,jdbcType=INTEGER}, 
+			</if>
+			<if test="matPatTimes != null">
+				mat_pat_times = #{matPatTimes,jdbcType=INTEGER},
+			</if>
+				confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+			<if test="infoApply != null">
+				info_apply = #{infoApply,jdbcType=INTEGER},
+			</if>
+			<if test="resultApply != null">
+				result_apply = #{resultApply,jdbcType=INTEGER},
+			</if>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=BIGINT},
+			</if>
+			<if test="result != null">	
+				result = #{result,jdbcType=INTEGER},
+			</if>
+			<if test="isReceive != null">	
+				is_receive = #{isReceive,jdbcType=INTEGER},
+			</if>
+			<if test="partsAtlCode != null">
+				parts_atl_code = #{partsAtlCode,jdbcType=VARCHAR},
+			</if>
+			<if test="matAtlCode != null">
+				mat_atl_code = #{matAtlCode,jdbcType=VARCHAR},
+			</if>
+			<if test="partsPatCode != null">
+				parts_pat_code = #{partsPatCode,jdbcType=VARCHAR},
+			</if>
+			<if test="matPatCode != null">
+				mat_pat_code = #{matPatCode,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<update id="updateState" parameterType="java.util.Map">
+		update task set state = #{state,jdbcType=INTEGER} where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="batchQueryByInfoId" resultMap="BaseResultMap" parameterType="java.util.List">
+		select <include refid="base_columns" /> from task t where t.type = 1 and t.i_id in
+		<foreach collection="list" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> order by t.create_time desc
+	</select>
+
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" />
+		from task t LEFT JOIN account a on t.a_id = a.id
+		<where>
+			<if test="code != null and code != ''">
+				and t.code like concat('%', #{code,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="qCode != null and qCode != ''">
+				and t.code = #{qCode,jdbcType=VARCHAR}
+			</if>
+
+			<if test="nickName != null and nickName != ''">
+				and a.nickname like concat('%', #{nickName,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="userName != null and userName != ''">
+				and a.username like concat('%', #{userName,jdbcType=VARCHAR}, '%')
+			</if>
+
+			<if test="orgId != null">
+				and t.org_id = #{orgId,jdbcType=BIGINT}
+			</if>
+
+			<if test="iId != null">
+				and t.i_id = #{iId,jdbcType=BIGINT}
+			</if>
+
+			<if test="aId != null">
+				and t.a_id = #{aId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="tId != null">
+				and t.t_id = #{tId,jdbcType=BIGINT}
+			</if>
+
+			<if test="state != null">
+				and t.state = #{state,jdbcType=INTEGER}
+			</if>
+			
+			<!-- 抽样是否存在 -->
+			<if test="unstate != null">
+				and t.state != 7 and t.state != 9 and t.state != 11
+			</if>
+			
+			<if test="type != null">
+				and t.type = #{type,jdbcType=INTEGER}
+			</if>
+
+			<if test="examineState != null">
+				and (t.state = 1 or t.state = 2)
+			</if>
+
+			<if test="partsAtlId != null">
+				and t.parts_atl_id = #{partsAtlId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="matAtlId != null">
+				and t.mat_atl_id = #{matAtlId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="partsPatId != null">
+				and t.parts_pat_id = #{partsPatId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="matPatId != null">
+				and t.mat_pat_id = #{matPatId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="partsAtlTimes != null">
+				and t.parts_atl_times = #{partsAtlTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="matAtlTimes != null">
+				and t.mat_atl_times = #{matAtlTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="partsPatTimes != null">
+				and t.parts_pat_times = #{partsPatTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="matPatTimes != null">
+				and t.mat_pat_times = #{matPatTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="failNum != null">
+				and t.fail_num &gt;= #{failNum,jdbcType=INTEGER}
+			</if>
+
+			<if test="partsAtlResult != null">
+				and t.parts_atl_result = #{partsAtlResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="matAtlResult != null">
+				and t.mat_atl_result = #{matAtlResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="partsPatResult != null">
+				and t.parts_pat_result = #{partsPatResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="matPatResult != null">
+				and t.mat_pat_result = #{matPatResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and t.create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and t.create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			
+			<if test="startConfirmTime != null and startConfirmTime != ''">
+				and t.confirm_time &gt;= #{startConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+
+			<if test="endConfirmTime != null and endConfirmTime != ''">
+				and t.confirm_time &lt;= #{endConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+			
+			<if test="infoApply != null">
+				and t.info_apply = #{infoApply,jdbcType=INTEGER}
+			</if>
+			<if test="resultApply != null">
+				and t.result_apply = #{resultApply,jdbcType=INTEGER}
+			</if>
+
+			<!-- OTS 任务下达列表 -->
+			<if test="transimtTask_ots != null">
+				and (t.parts_atl_id is null or t.mat_atl_id is null or t.parts_pat_id is null or t.mat_pat_id is null)
+			</if>
+			
+			<!-- gs 任务下达列表 -->
+			<if test="transimtTask_gs != null">
+				and (t.mat_atl_id is null or t.mat_pat_id is null)
+			</if>
+
+			<!-- OTS 审批列表 -->
+			<if test="approveTask_ots != null">
+				and ((t.state = 3 and (( t.parts_atl_result = 0 AND t.parts_atl_id IS NOT NULL ) OR ( t.mat_atl_result = 0 AND t.mat_atl_id IS NOT NULL ) OR ( t.parts_pat_result = 0 AND t.parts_pat_id IS NOT NULL ) OR ( t.mat_pat_result = 0 AND t.mat_pat_id IS NOT NULL ))) or (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null)))
+			</if>
+			
+			<!-- gs 审批列表-->
+			<if test="approveTask_gs != null">
+				and ((t.state = 3 and ((t.mat_atl_result = 0 and t.mat_atl_id IS NOT NULL) or (t.mat_pat_result = 0 and t.mat_pat_id IS NOT NULL ))) or (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null)))
+			</if>
+			
+			<!-- PPAP 审批列表 -->
+			<if test="ppap_approveTask != null">
+				and (t.state = 1 or (t.state = 8 and (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null))))
+			</if>
+
+			<!-- 图谱结果上传 -->
+			<if test="atlasTask != null">
+				and ((t.parts_atl_id = #{atlasTask, jdbcType=BIGINT} and t.parts_atl_result = 1 ) or (t.mat_atl_id = #{atlasTask, jdbcType=BIGINT} and t.mat_atl_result = 1))
+			</if>
+
+			<if test="atlasTask_admin != null">
+				and ( t.parts_atl_result = 1 or t.mat_atl_result = 1 )
+			</if>
+
+			<!-- 型式结果上传 -->
+			<if test="patternTask != null">
+				and ((t.parts_pat_id = #{patternTask, jdbcType=BIGINT} and t.parts_pat_result = 1 ) or (t.mat_pat_id = #{patternTask, jdbcType=BIGINT} and t.mat_pat_result = 1))
+			</if>
+
+			<if test="patternTask_admin != null">
+				and ( t.parts_pat_result = 1 or t.mat_pat_result = 1)
+			</if>
+			
+			<!-- 结果对比列表 -->
+			<if test="compareTask != null">
+				and ( t.type = 2 or t.type = 3)
+			</if>
+
+			<!-- 结果发送列表 -->
+			<if test="sendTask != null">
+			    and ((state =3 and (type = 1 or type = 4)) or (state = 5 and (type = 2 or type = 3))) and ((t.parts_pat_id = #{sendTask, jdbcType=BIGINT} and t.parts_pat_result = 2 ) or (t.mat_pat_id = #{sendTask, jdbcType=BIGINT} and t.mat_pat_result = 2) or (t.parts_atl_id = #{sendTask, jdbcType=BIGINT} and t.parts_atl_result = 2) or (t.mat_atl_id = #{sendTask, jdbcType=BIGINT} and t.mat_atl_result = 2))
+			</if>
+			
+			<if test="sendTask_admin != null">
+				and ((state =3 and (type = 1 or type = 4)) or (state = 5 and (type = 2 or type = 3))) and (t.parts_pat_result = 2  or t.mat_pat_result = 2 or t.parts_atl_result = 2 or t.mat_atl_result = 2)
+			</if>
+
+
+			<!-- 结果确认：待上传列表 -->
+			<if test="confirmTask_wait != null">
+				and ((t.type = 1 and ((t.parts_pat_result = 3  or t.mat_pat_result = 3 or t.parts_atl_result = 3 or t.mat_atl_result = 3) and (t.parts_pat_result != 3  or t.mat_pat_result != 3 or t.parts_atl_result != 3 or t.mat_atl_result != 3))) or (t.type = 4 and ((t.mat_pat_result = 3 or t.mat_atl_result = 3) and (t.mat_pat_result != 3 or t.mat_atl_result != 3))))
+			</if>
+			
+			<!-- 结果确认：已上传列表 -->
+			<if test="confirmTask_finish != null">
+				and ((t.type = 1 and t.state = 3 and t.parts_pat_result = 3  and t.mat_pat_result = 3 and t.parts_atl_result = 3 and t.mat_atl_result = 3) or (t.state = 6 and (type = 2 or type = 3) or (t.type = 4 and t.state = 3 and t.mat_pat_result = 3 and t.mat_atl_result = 3)))
+			</if>
+
+			<!-- 所有已完成的任务 -->
+			<if test="accomplishTask != null">
+				and (((t.type = 1 or t.type = 4) and (t.state = 4 or t.state = 5)) or ((t.type = 2 or t.type = 3) and (t.state = 7 or t.state = 8))) and (t.info_apply != 1 and t.result_apply != 1 and t.result_apply != 2)
+			</if>
+			
+			<!-- 只能看到分配自己实验室的任务 -->
+			<if test="accomplishTask_lab != null">
+				and (t.parts_pat_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.mat_pat_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.parts_atl_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.mat_atl_id = #{accomplishTask_lab, jdbcType=BIGINT}) and (((t.type = 1 or t.type = 4) and (t.state = 4 or t.state = 5)) or ((t.type = 2 or t.type = 3) and (t.state = 7 or t.state = 8)))  and (t.info_apply != 1 and t.result_apply != 1 and t.result_apply != 2)
+			</if>
+			
+			<!-- 任务查询  -->
+			<if test="queryMap != null">
+				and (a.id = #{queryMap.accountId, jdbcType=BIGINT} or parts_atl_id = #{queryMap.orgId, jdbcType=BIGINT} or mat_atl_id = #{queryMap.orgId, jdbcType=BIGINT} or parts_pat_id = #{queryMap.orgId, jdbcType=BIGINT} or mat_pat_id = #{queryMap.orgId, jdbcType=BIGINT}
+				<if test="queryMap.taskIdList != null">
+					or t.id in <foreach collection="queryMap.taskIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+				</if>
+				)
+			</if>
+			
+			<!-- 任务查询  -->
+			<if test="taskIdList != null">
+				and t.id in <foreach collection="taskIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+			</if>
+			
+			<!-- 信息ID -->
+			<if test="iIdList != null">
+				and t.i_id in <foreach collection="iIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+			</if>
+			
+			<!-- 实验室ID -->
+			<if test="labOrgId != null">
+				and (t.parts_atl_id = #{labOrgId, jdbcType=BIGINT} or t.mat_atl_id = #{labOrgId, jdbcType=BIGINT} or t.parts_pat_id = #{labOrgId, jdbcType=BIGINT} or t.mat_pat_id = #{labOrgId, jdbcType=BIGINT})
+			</if>
+			
+			<if test="result != null">	
+				and t.result = #{result,jdbcType=INTEGER}
+			</if>
+			
+			<if test="isReceive != null">	
+				and t.is_receive = #{isReceive,jdbcType=INTEGER}
+			</if>
+			
+		</where>
+
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by t.id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getTaskNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select ifnull(count(T.id),0) as totalNum from task t LEFT JOIN account a on t.a_id = a.id
+		<where>
+			<if test="code != null and code != ''">
+				and t.code like concat('%', #{code,jdbcType=VARCHAR}, '%')
+			</if>
+
+			<if test="nickName != null and nickName != ''">
+				and a.nickname like concat('%', #{nickName,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="userName != null and userName != ''">
+				and a.username like concat('%', #{userName,jdbcType=VARCHAR}, '%')
+			</if>
+
+			<if test="orgId != null">
+				and t.org_id = #{orgId,jdbcType=BIGINT}
+			</if>
+
+			<if test="iId != null">
+				and t.i_id = #{iId,jdbcType=BIGINT}
+			</if>
+
+			<if test="aId != null">
+				and t.a_id = #{aId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="tId != null">
+				and t.t_id = #{tId,jdbcType=BIGINT}
+			</if>
+
+			<if test="state != null">
+				and t.state = #{state,jdbcType=INTEGER}
+			</if>
+			
+			<!-- 抽样是否存在 -->
+			<if test="unstate != null">
+				and t.state != 7 and t.state != 9
+			</if>
+			
+			<if test="type != null">
+				and t.type = #{type,jdbcType=INTEGER}
+			</if>
+
+			<if test="examineState != null">
+				and (t.state = 1 or t.state = 2)
+			</if>
+
+			<if test="partsAtlId != null">
+				and t.parts_atl_id = #{partsAtlId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="matAtlId != null">
+				and t.mat_atl_id = #{matAtlId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="partsPatId != null">
+				and t.parts_pat_id = #{partsPatId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="matPatId != null">
+				and t.mat_pat_id = #{matPatId,jdbcType=BIGINT}
+			</if>
+			
+			<if test="partsAtlTimes != null">
+				and t.parts_atl_times = #{partsAtlTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="matAtlTimes != null">
+				and t.mat_atl_times = #{matAtlTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="partsPatTimes != null">
+				and t.parts_pat_times = #{partsPatTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="matPatTimes != null">
+				and t.mat_pat_times = #{matPatTimes,jdbcType=INTEGER}
+			</if>
+			
+			<if test="failNum != null">
+				and t.fail_num &gt;= #{failNum,jdbcType=INTEGER}
+			</if>
+
+			<if test="partsAtlResult != null">
+				and t.parts_atl_result = #{partsAtlResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="matAtlResult != null">
+				and t.mat_atl_result = #{matAtlResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="partsPatResult != null">
+				and t.parts_pat_result = #{partsPatResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="matPatResult != null">
+				and t.mat_pat_result = #{matPatResult,jdbcType=INTEGER}
+			</if>
+
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and t.create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and t.create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			
+			<if test="startConfirmTime != null and startConfirmTime != ''">
+				and t.confirm_time &gt;= #{startConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+
+			<if test="endConfirmTime != null and endConfirmTime != ''">
+				and t.confirm_time &lt;= #{endConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+			
+			<if test="infoApply != null">
+				and t.info_apply = #{infoApply,jdbcType=INTEGER}
+			</if>
+			<if test="resultApply != null">
+				and t.result_apply = #{resultApply,jdbcType=INTEGER}
+			</if>
+
+			<!-- OTS 任务下达列表 -->
+			<if test="transimtTask_ots != null">
+				and (t.parts_atl_id is null or t.mat_atl_id is null or t.parts_pat_id is null or t.mat_pat_id is null)
+			</if>
+			
+			<!-- gs 任务下达列表 -->
+			<if test="transimtTask_gs != null">
+				and (t.mat_atl_id is null or t.mat_pat_id is null)
+			</if>
+
+			<!-- OTS 审批列表 -->
+			<if test="approveTask_ots != null">
+				and ((t.state = 3 and (( t.parts_atl_result = 0 AND t.parts_atl_id IS NOT NULL ) OR ( t.mat_atl_result = 0 AND t.mat_atl_id IS NOT NULL ) OR ( t.parts_pat_result = 0 AND t.parts_pat_id IS NOT NULL ) OR ( t.mat_pat_result = 0 AND t.mat_pat_id IS NOT NULL ))) or (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null)))
+			</if>
+			
+			<!-- gs 审批列表-->
+			<if test="approveTask_gs != null">
+				and ((t.state = 3 and ((t.mat_atl_result = 0 and t.mat_atl_id IS NOT NULL) or (t.mat_pat_result = 0 and t.mat_pat_id IS NOT NULL ))) or (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null)))
+			</if>
+			
+			<!-- PPAP 审批列表 -->
+			<if test="ppap_approveTask != null">
+				and (t.state = 1 or (t.state = 8 and (t.info_apply = 1 or (t.result_apply = 1 and t_id is not null))))
+			</if>
+
+			<!-- 图谱结果上传 -->
+			<if test="atlasTask != null">
+				and ((t.parts_atl_id = #{atlasTask, jdbcType=BIGINT} and t.parts_atl_result = 1 ) or (t.mat_atl_id = #{atlasTask, jdbcType=BIGINT} and t.mat_atl_result = 1))
+			</if>
+
+			<if test="atlasTask_admin != null">
+				and ( t.parts_atl_result = 1 or t.mat_atl_result = 1 )
+			</if>
+
+			<!-- 型式结果上传 -->
+			<if test="patternTask != null">
+				and ((t.parts_pat_id = #{patternTask, jdbcType=BIGINT} and t.parts_pat_result = 1 ) or (t.mat_pat_id = #{patternTask, jdbcType=BIGINT} and t.mat_pat_result = 1))
+			</if>
+
+			<if test="patternTask_admin != null">
+				and ( t.parts_pat_result = 1 or t.mat_pat_result = 1)
+			</if>
+			
+			<!-- 结果对比列表 -->
+			<if test="compareTask != null">
+				and ( t.type = 2 or t.type = 3)
+			</if>
+
+			<!-- 结果发送列表 -->
+			<if test="sendTask != null">
+			    and ((state =3 and (type = 1 or type = 4)) or (state = 5 and (type = 2 or type = 3))) and ((t.parts_pat_id = #{sendTask, jdbcType=BIGINT} and t.parts_pat_result = 2 ) or (t.mat_pat_id = #{sendTask, jdbcType=BIGINT} and t.mat_pat_result = 2) or (t.parts_atl_id = #{sendTask, jdbcType=BIGINT} and t.parts_atl_result = 2) or (t.mat_atl_id = #{sendTask, jdbcType=BIGINT} and t.mat_atl_result = 2))
+			</if>
+			
+			<if test="sendTask_admin != null">
+				and ((state =3 and (type = 1 or type = 4)) or (state = 5 and (type = 2 or type = 3))) and (t.parts_pat_result = 2  or t.mat_pat_result = 2 or t.parts_atl_result = 2 or t.mat_atl_result = 2)
+			</if>
+
+
+			<!-- 结果确认：待上传列表 -->
+			<if test="confirmTask_wait != null">
+				and ((t.type = 1 and ((t.parts_pat_result = 3  or t.mat_pat_result = 3 or t.parts_atl_result = 3 or t.mat_atl_result = 3) and (t.parts_pat_result != 3  or t.mat_pat_result != 3 or t.parts_atl_result != 3 or t.mat_atl_result != 3))) or (t.type = 4 and ((t.mat_pat_result = 3 or t.mat_atl_result = 3) and (t.mat_pat_result != 3 or t.mat_atl_result != 3))))
+			</if>
+			
+			<!-- 结果确认：已上传列表 -->
+			<if test="confirmTask_finish != null">
+				and ((t.type = 1 and t.state = 3 and t.parts_pat_result = 3  and t.mat_pat_result = 3 and t.parts_atl_result = 3 and t.mat_atl_result = 3) or (t.state = 6 and (type = 2 or type = 3) or (t.type = 4 and t.state = 3 and t.mat_pat_result = 3 and t.mat_atl_result = 3)))
+			</if>
+
+			<!-- 所有已完成的任务 -->
+			<if test="accomplishTask != null">
+				and (((t.type = 1 or t.type = 4) and (t.state = 4 or t.state = 5)) or ((t.type = 2 or t.type = 3) and (t.state = 7 or t.state = 8))) and (t.info_apply != 1 and t.result_apply != 1 and t.result_apply != 2)
+			</if>
+			
+			<!-- 只能看到分配自己实验室的任务 -->
+			<if test="accomplishTask_lab != null">
+				and (t.parts_pat_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.mat_pat_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.parts_atl_id = #{accomplishTask_lab, jdbcType=BIGINT} or t.mat_atl_id = #{accomplishTask_lab, jdbcType=BIGINT}) and (((t.type = 1 or t.type = 4) and (t.state = 4 or t.state = 5)) or ((t.type = 2 or t.type = 3) and (t.state = 7 or t.state = 8)))  and (t.info_apply != 1 and t.result_apply != 1 and t.result_apply != 2)
+			</if>
+			
+			<!-- 任务查询  -->
+			<if test="queryMap != null">
+				and (a.id = #{queryMap.accountId, jdbcType=BIGINT} or parts_atl_id = #{queryMap.orgId, jdbcType=BIGINT} or mat_atl_id = #{queryMap.orgId, jdbcType=BIGINT} or parts_pat_id = #{queryMap.orgId, jdbcType=BIGINT} or mat_pat_id = #{queryMap.orgId, jdbcType=BIGINT}
+				<if test="queryMap.taskIdList != null">
+					or t.id in <foreach collection="queryMap.taskIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+				</if>
+				)
+			</if>
+			
+			<!-- 任务查询  -->
+			<if test="taskIdList != null">
+				and t.id in <foreach collection="taskIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+			</if>
+			
+			<!-- 信息ID -->
+			<if test="iIdList != null">
+				and t.i_id in <foreach collection="iIdList" item="id" index="index" separator=","  open= "(" close =")"> #{id} </foreach> 
+			</if>
+			
+			<!-- 实验室ID -->
+			<if test="labOrgId != null">
+				and (t.parts_atl_id = #{labOrgId, jdbcType=BIGINT} or t.mat_atl_id = #{labOrgId, jdbcType=BIGINT} or t.parts_pat_id = #{labOrgId, jdbcType=BIGINT} or t.mat_pat_id = #{labOrgId, jdbcType=BIGINT})
+			</if>
+			
+			<if test="result != null">	
+				and t.result = #{result,jdbcType=INTEGER}
+			</if>
+			
+			<if test="isReceive != null">	
+				and t.is_receive = #{isReceive,jdbcType=INTEGER}
+			</if>
+		</where>
+
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by t.id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+</mapper>

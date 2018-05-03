@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.LabConclusionDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.LabConclusion">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="conclusion" property="conclusion" jdbcType="VARCHAR" />
+		<result column="rep_num" property="repNum" jdbcType="VARCHAR" />
+		<result column="main_inspe" property="mainInspe" jdbcType="VARCHAR" />
+		<result column="examine" property="examine" jdbcType="VARCHAR" />
+		<result column="issue" property="issue" jdbcType="VARCHAR" />
+		<result column="receive_date" property="receiveDate" jdbcType="DATE" />
+		<result column="examine_date" property="examineDate" jdbcType="DATE" />
+		<result column="issue_date" property="issueDate" jdbcType="DATE" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="task_id" property="taskId" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, conclusion, rep_num, main_inspe, examine, issue, receive_date, examine_date, issue_date, remark, task_id, type
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from lab_conclusion where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from lab_conclusion where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.LabConclusion">
+		insert into lab_conclusion (conclusion, rep_num, main_inspe, examine, issue, receive_date, examine_date, issue_date, remark, task_id, type)
+		values (#{conclusion,jdbcType=VARCHAR}, #{repNum,jdbcType=VARCHAR},
+		#{mainInspe,jdbcType=VARCHAR}, #{examine,jdbcType=VARCHAR}, #{issue,jdbcType=VARCHAR},
+		#{receiveDate,jdbcType=DATE}, #{examineDate,jdbcType=DATE}, #{issueDate,jdbcType=DATE},
+		#{remark,jdbcType=VARCHAR}, #{taskId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.LabConclusion">
+		update lab_conclusion
+		<set>
+			<if test="conclusion != null">
+				conclusion = #{conclusion,jdbcType=VARCHAR},
+			</if>
+			<if test="repNum != null">
+				rep_num = #{repNum,jdbcType=VARCHAR},
+			</if>
+			<if test="mainInspe != null">
+				main_inspe = #{mainInspe,jdbcType=VARCHAR},
+			</if>
+			<if test="examine != null">
+				examine = #{examine,jdbcType=VARCHAR},
+			</if>
+			<if test="issue != null">
+				issue = #{issue,jdbcType=VARCHAR},
+			</if>
+			<if test="receiveDate != null">
+				receive_date = #{receiveDate,jdbcType=DATE},
+			</if>
+			<if test="examineDate != null">
+				examine_date = #{examineDate,jdbcType=DATE},
+			</if>
+			<if test="issueDate != null">
+				issue_date = #{issueDate,jdbcType=DATE},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="taskId != null">
+				task_id = #{taskId,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" /> from lab_conclusion
+		<where>
+			<if test="taskId != null">
+				and task_id = #{taskId,jdbcType=BIGINT}
+			</if>
+		</where>
+
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="batchAdd" parameterType="java.util.List">
+		insert into lab_conclusion (conclusion, rep_num, main_inspe, examine, issue, receive_date, examine_date, issue_date, remark, task_id, type) values
+		<foreach collection="list" item="item" separator=",">
+		 (#{item.conclusion,jdbcType=VARCHAR}, #{item.repNum,jdbcType=VARCHAR},
+			#{item.mainInspe,jdbcType=VARCHAR}, #{item.examine,jdbcType=VARCHAR}, #{item.issue,jdbcType=VARCHAR},
+			#{item.receiveDate,jdbcType=DATE}, #{item.examineDate,jdbcType=DATE}, #{item.issueDate,jdbcType=DATE},
+			#{item.remark,jdbcType=VARCHAR}, #{item.taskId,jdbcType=BIGINT}, #{item.type,jdbcType=INTEGER}
+		 )
+		</foreach>
+	</insert> 
+	
+</mapper>

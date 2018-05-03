@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.RoleGroupDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.RoleGroup">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="parentid" property="parentid" jdbcType="BIGINT" />
+		<result column="desc" jdbcType="VARCHAR" property="desc" />
+		<association property="parent" javaType="cn.wow.common.domain.RoleGroup" column="parentid" select="selectOne"/> 
+		<collection property="subList" javaType="java.util.ArrayList" column="id" ofType="cn.wow.common.domain.RoleGroup" select="selectSubList"></collection>
+		<collection property="roleList" javaType="java.util.ArrayList" column="id" ofType="cn.wow.common.domain.Role" select="cn.wow.common.dao.RoleDao.selectByGrid"></collection>
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, name, parentid, `desc`
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from role_group where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from role_group
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.RoleGroup">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+		    SELECT @@IDENTITY
+		</selectKey>
+		insert into role_group (name, parentid, `desc`) values (#{name,jdbcType=VARCHAR},#{parentid,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.RoleGroup">
+		update role_group
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="parentid != null">
+				parentid = #{parentid,jdbcType=BIGINT},
+			</if>
+			`desc` = #{desc,jdbcType=VARCHAR}
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<!-- 获取子节点 -->
+	<select id="selectSubList" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from role_group where parentid = #{id} order by name asc
+	</select>
+	
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from role_group
+	     <where>
+			  <if test="name != null">
+				and name = #{name,jdbcType=VARCHAR}
+			  </if>
+			  <if test="parentid != null">
+				and parentid = #{parentid,jdbcType=BIGINT}
+			</if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+</mapper>

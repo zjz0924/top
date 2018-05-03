@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.AccountDao" >
+  <resultMap id="BaseResultMap" type="cn.wow.common.domain.Account" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="username" property="userName" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="lock" property="lock" jdbcType="CHAR" />
+    <result column="role_id" property="roleId" jdbcType="BIGINT" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    <result column="pic" property="pic" jdbcType="VARCHAR" />
+	<result column="remark" property="remark" jdbcType="VARCHAR" />
+	<result column="sign_type" property="signType" jdbcType="INTEGER" />
+	<result column="is_charge" property="isCharge" jdbcType="INTEGER" />
+    <association property="org" javaType="cn.wow.common.domain.Org" column="org_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+    <association property="role" javaType="cn.wow.common.domain.Role" column="role_id" select="cn.wow.common.dao.RoleDao.selectOne"/>
+  </resultMap>
+  
+  <sql id="base_columns" >
+    id, username, nickname, password, mobile, email, create_time, `lock`, role_id, org_id, pic, remark, sign_type, is_charge
+  </sql>
+  
+  <insert id="insert" parameterType="cn.wow.common.domain.Account" >
+    insert into account (username, nickname, password, mobile, create_time, `lock`, role_id, email, org_id, pic, remark, sign_type, is_charge)
+    	values (#{userName,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, 
+      		#{password,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      		#{createTime,jdbcType=TIMESTAMP}, #{lock,jdbcType=CHAR}, #{roleId,jdbcType=BIGINT}, #{email,jdbcType=VARCHAR}, #{orgId,jdbcType=BIGINT},
+      		#{pic,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{signType,jdbcType=INTEGER} ,#{isCharge,jdbcType=INTEGER})
+  </insert>
+  
+  <select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="base_columns" />
+    from account
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <update id="update" parameterType="cn.wow.common.domain.Account" >
+    update account
+    <set>
+      <if test="userName != null" >
+        username = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        nickname = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lock != null" >
+        `lock` = #{lock,jdbcType=CHAR}, 
+      </if>
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="pic != null">
+		pic = #{pic,jdbcType=VARCHAR},
+	  </if>
+		remark = #{remark,jdbcType=VARCHAR},
+	  <if test="signType != null" >
+        sign_type = #{signType,jdbcType=INTEGER},
+      </if>
+	  <if test="isCharge != null" >	
+		is_charge = #{isCharge,jdbcType=INTEGER},
+	  </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+	<update id="clearPic" parameterType="java.lang.Long">
+		update account set pic = null where id = #{id}
+	</update>
+	
+    <update id="clearOrg" parameterType="java.lang.Long">
+		update account set org_id = null where org_id = #{id}
+	</update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from account
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <select id="selectByAccountName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="base_columns" />
+    from account where username = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  	select 
+    <include refid="base_columns" />
+      from account
+     <where>
+		  <if test="userName != null and userName != ''" >
+	        and username = #{userName,jdbcType=VARCHAR}
+	      </if>
+	      
+	      <if test="qUserName != null and qUserName != ''" >
+	        and username like concat('%', #{qUserName,jdbcType=VARCHAR}, '%') 
+	      </if>
+	      
+	      <if test="nickName != null and nickName != ''" >
+	        and nickname like concat('%', #{nickName,jdbcType=VARCHAR}, '%') 
+	      </if>
+	      
+	      <if test="mobile != null and mobile != ''" >
+        	and mobile like concat('%', #{mobile,jdbcType=VARCHAR}, '%')
+	      </if>
+	      
+	      <if test="lock != null and lock != ''">
+	        and `lock` = #{lock,jdbcType=CHAR}
+	      </if>
+	      
+	      <if test="startCreateTime != null and startCreateTime != ''">  
+	    	and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+	      </if>
+	      
+	      <if test="endCreateTime != null and endCreateTime != ''">  
+	    	and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+	      </if>
+	      
+	      <if test="roleId != null" >
+	        and role_id = #{roleId,jdbcType=BIGINT}
+	      </if>
+	      
+	      <if test="email != null" >
+	        and email = #{email,jdbcType=VARCHAR}
+	      </if>
+	      
+	      <if test="orgId != null" >
+	        and org_id = #{orgId,jdbcType=BIGINT}
+	      </if>
+	      
+	      <if test="isCharge != null" >	
+			and is_charge = #{isCharge,jdbcType=INTEGER}
+		  </if>
+	      
+	      <if test="orgs != null">
+			and org_id in
+			<foreach collection="orgs" item="id" index="index" separator=","
+				open="(" close=")">
+				#{id}
+			</foreach>
+		  </if>
+      </where>
+      
+	  <choose>
+  		<when test="custom_order_sql != null">
+  			order by ${custom_order_sql}
+  		</when>
+  		<otherwise>
+  			order by id desc
+  		</otherwise>
+ 	 </choose>
+  </select>
+  
+  
+  <insert id="batchAdd" parameterType="java.util.List"> 
+		insert into account (username, nickname, password, mobile, create_time, `lock`, role_id, email, org_id, is_charge) values 
+	<foreach collection="list" item="item" separator=",">  
+	  (#{item.userName,jdbcType=VARCHAR}, #{item.nickName,jdbcType=VARCHAR},  #{item.password,jdbcType=VARCHAR}, #{item.mobile,jdbcType=VARCHAR}, 
+       #{item.createTime,jdbcType=TIMESTAMP}, #{item.lock,jdbcType=CHAR}, #{item.roleId,jdbcType=BIGINT}, #{item.email,jdbcType=VARCHAR}, #{item.orgId,jdbcType=BIGINT},
+       #{item.isCharge,jdbcType=INTEGER})
+	</foreach>  
+  </insert> 
+  
+  <select id="batchUpdate" parameterType="java.util.List">
+	<foreach collection="list" item="item" index="index" separator=";"  open= "" close ="">  
+		update account
+	    <set>
+	      <if test="item.userName != null" >
+	        username = #{item.userName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.nickName != null" >
+	        nickname = #{item.nickName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.mobile != null" >
+	        mobile = #{item.mobile,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.email != null" >
+	        email = #{item.email,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.roleId != null" >
+	        role_id = #{item.roleId,jdbcType=BIGINT},
+	      </if>
+	      <if test="item.orgId != null" >
+	        org_id = #{item.orgId,jdbcType=BIGINT},
+	      </if>
+	      <if test="item.isCharge != null" >	
+			is_charge = #{item.isCharge,jdbcType=INTEGER},
+		  </if>
+	    </set>
+		where id = #{item.id,jdbcType=BIGINT}     
+	</foreach>
+  </select> 
+  
+  
+  <!-- 获取操作的用户（任务阶段） -->
+  <select id="getOperationUser" resultMap="BaseResultMap" parameterType="java.util.Map">
+  		SELECT distinct a.username, a.email FROM account a LEFT JOIN task_record r ON r.a_id = a.id LEFT JOIN task t ON t.`code` = r.`code` 
+  		<where> 
+  			<if test="taskId != null">
+  				and t.id = #{taskId,jdbcType=BIGINT}
+  			</if>
+  			<if test="state != null">
+  				and r.state &lt;= #{state, jdbcType=INTEGER}
+  			</if>
+  		</where>
+  		order by r.create_time desc limit 1
+  </select>
+  
+   
+</mapper>

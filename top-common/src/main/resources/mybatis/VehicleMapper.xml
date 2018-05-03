@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.VehicleDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.Vehicle">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="pro_time" property="proTime" jdbcType="DATE" />
+		<result column="pro_addr" property="proAddr" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, code, type, pro_time, pro_addr, remark, create_time, state
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from vehicle where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="base_columns" /> from vehicle where code = #{code,jdbcType=VARCHAR} and state != 2
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from vehicle where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.Vehicle">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+			SELECT @@IDENTITY
+		</selectKey>
+		
+		insert into vehicle (code, type, pro_time, pro_addr, remark, create_time, state)
+			values (#{code,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{proTime,jdbcType=DATE}, #{proAddr,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+				#{createTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.Vehicle">
+		update vehicle
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="proTime != null">
+				pro_time = #{proTime,jdbcType=DATE},
+			</if>
+			<if test="proAddr != null">
+				pro_addr = #{proAddr,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			remark = #{remark,jdbcType=VARCHAR},
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	 <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from vehicle
+	     <where>
+		      <if test="code != null and code != ''" >
+		        and code like concat('%', #{code,jdbcType=VARCHAR}, '%') 
+		      </if>
+		      
+		      <if test="type != null and type != ''" >
+		        and type like concat('%', #{type,jdbcType=VARCHAR}, '%') 
+		      </if>
+		      
+		      <if test="state != null">
+				and state = #{state,jdbcType=INTEGER}
+			 </if>
+			 
+			 <if test="notstate != null">
+				and state != #{notstate,jdbcType=INTEGER}
+			 </if>
+		      
+		     <if test="startProTime != null and startProTime != ''">  
+		    	and pro_time &gt;= #{startProTime, jdbcType=DATE}
+		      </if>
+		      
+		      <if test="endProTime != null and endProTime != ''">  
+		    	and pro_time &lt;= #{endProTime, jdbcType=DATE}
+		      </if>
+		      
+		      <if test="startCreateTime != null and startCreateTime != ''">  
+		    	and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		      <if test="endCreateTime != null and endCreateTime != ''">  
+		    	and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		       <if test="ecode != null and code != ''" >
+		        and code = #{ecode,jdbcType=VARCHAR}
+		      </if>
+		      
+		      <if test="etype != null and etype != ''" >
+		        and type = #{etype,jdbcType=VARCHAR}
+		      </if>
+		      
+		       <if test="eProTime != null and eProTime != ''">  
+		    	and pro_time = #{eProTime, jdbcType=DATE}
+		      </if>
+		      
+		      <if test="remark != null">
+				and remark = #{remark,jdbcType=VARCHAR}
+			 </if>
+			 
+			 <if test="proAddr != null">
+				and pro_addr = #{proAddr,jdbcType=VARCHAR}
+			 </if>
+			 
+			 <if test="eid != null">
+				and id != #{eid,jdbcType=BIGINT}
+			 </if>
+		      
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+</mapper>

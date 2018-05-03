@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.AtlasResultDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.AtlasResult">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="t_id" property="tId" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="pic" property="pic" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="catagory" property="catagory" jdbcType="INTEGER" />
+		<result column="exp_no" property="expNo" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, t_id, type, pic, remark, create_time, catagory, exp_no
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from atlas_result where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from atlas_result where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.AtlasResult">
+		insert into atlas_result (t_id, type, pic, remark, create_time, catagory, exp_no)
+			values (#{tId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{pic,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{catagory,jdbcType=INTEGER},
+					#{expNo,jdbcType=INTEGER})
+	</insert>
+	
+	
+	<update id="update" parameterType="cn.wow.common.domain.AtlasResult">
+		update atlas_result
+		<set>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="pic != null">
+				pic = #{pic,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="catagory != null">
+				catagory = #{catagory,jdbcType=INTEGER},
+			</if>
+			<if test="expNo != null">
+			 	exp_no = #{expNo,jdbcType=INTEGER}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from atlas_result
+	     <where>
+			<if test="tId != null">
+				and t_id = #{tId,jdbcType=BIGINT}
+			</if>
+			<if test="type != null">
+				and type = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="catagory != null">
+				and catagory = #{catagory,jdbcType=INTEGER}
+			</if>
+			<if test="expNo != null">
+			 	and exp_no = #{expNo,jdbcType=INTEGER}
+			</if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+
+	<insert id="batchAdd" parameterType="java.util.List">
+		insert into atlas_result (t_id, type, pic, remark, create_time, catagory, exp_no) values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.tId,jdbcType=BIGINT}, #{item.type,jdbcType=INTEGER},
+			#{item.pic,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR},
+			#{item.createTime,jdbcType=TIMESTAMP}, #{item.catagory,jdbcType=INTEGER}, #{item.expNo,jdbcType=INTEGER})
+		</foreach>
+	</insert> 
+	
+	<!-- 获取试验次数 -->
+	<select id="getExpNoByCatagory"  resultType="int" parameterType="java.util.Map" >
+		select count(distinct exp_no) num from atlas_result where t_id = #{taskId} and catagory = #{catagory}
+	</select>
+	
+	<!-- 获取基准图谱结果 -->
+	<select id="getStandardAtlResult" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select ar.* from atlas_result ar LEFT JOIN task t on t.id = ar.t_id LEFT JOIN info i on i.id = t.i_id where t.i_id = #{iId,jdbcType=BIGINT} and t.type = 1 and catagory = #{catagory,jdbcType=INTEGER } order by exp_no desc limit 4
+	</select>
+
+</mapper>

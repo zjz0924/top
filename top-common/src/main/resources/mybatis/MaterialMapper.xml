@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.MaterialDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.Material">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="mat_name" property="matName" jdbcType="VARCHAR" />
+		<result column="mat_no" property="matNo" jdbcType="VARCHAR" />
+		<result column="mat_color" property="matColor" jdbcType="VARCHAR" />
+		<result column="pro_no" property="proNo" jdbcType="VARCHAR" />
+		<result column="pic" property="pic" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="org_id" property="orgId" jdbcType="BIGINT" />
+		<result column="contacts" property="contacts" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<association property="org" javaType="cn.wow.common.domain.Org" column="org_id" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, type, mat_name, mat_no, mat_color, pro_no, pic, remark, create_time, state, org_id, contacts, phone
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from material where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from material where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.Material">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+			SELECT @@IDENTITY
+		</selectKey>
+		
+		insert into material (type, mat_name, mat_no, mat_color, pro_no, pic, remark, create_time, state, org_id, contacts, phone)
+		values (#{type,jdbcType=INTEGER}, #{matName,jdbcType=VARCHAR}, #{matNo,jdbcType=VARCHAR}, #{matColor,jdbcType=VARCHAR},
+		#{proNo,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+		#{state,jdbcType=INTEGER}, #{orgId,jdbcType=BIGINT}, #{contacts,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.Material">
+		update material
+		<set>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="matName != null">
+				mat_name = #{matName,jdbcType=VARCHAR},
+			</if>
+			<if test="matNo != null">
+				mat_no = #{matNo,jdbcType=VARCHAR},
+			</if>
+			<if test="matColor != null">
+				mat_color = #{matColor,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="proNo != null">
+				pro_no = #{proNo,jdbcType=VARCHAR},
+			</if>
+			<if test="pic != null">
+				pic = #{pic,jdbcType=VARCHAR},
+			</if>
+				remark = #{remark,jdbcType=VARCHAR},
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orgId != null" >
+		        org_id = #{orgId,jdbcType=BIGINT},
+		    </if>
+		     <if test="contacts != null" >
+		    	contacts = #{contacts,jdbcType=VARCHAR}, 
+		    </if>
+		    <if test="phone != null" >
+		    	phone = #{phone,jdbcType=VARCHAR},
+		    </if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from material
+	     <where>
+		      <if test="type != null and type != ''" >
+		        and type = #{type,jdbcType=INTEGER}
+		      </if>
+		      
+		      <if test="state != null">
+				and state = #{state,jdbcType=INTEGER}
+			 </if>
+			 
+			  <if test="notstate != null">
+				and state != #{notstate,jdbcType=INTEGER}
+			 </if>
+		      
+		      <if test="startCreateTime != null and startCreateTime != ''">  
+		    	and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		      <if test="endCreateTime != null and endCreateTime != ''">  
+		    	and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+		      </if>
+		      
+		      <if test="proNo != null and proNo != ''" >
+		        and pro_no like concat('%', #{proNo,jdbcType=VARCHAR}, '%') 
+		      </if>
+		      
+		      <if test="qmatName != null and qmatName != ''" >
+		        and mat_name like concat('%', #{qmatName,jdbcType=VARCHAR}, '%') 
+		      </if>
+		      
+		      <if test="matName != null and matName != ''" >
+		        and mat_name = #{matName,jdbcType=VARCHAR}
+		      </if>
+		      
+		      <if test="matNo != null and matNo != ''" >
+		        and mat_no like concat('%', #{matNo,jdbcType=VARCHAR}, '%') 
+		      </if>
+		      
+		      <if test="orgId != null">
+				and org_id = #{orgId,jdbcType=BIGINT}
+			  </if>
+			  
+			 <if test="contacts != null" >
+		    	and contacts like concat('%', #{contacts,jdbcType=VARCHAR}, '%')
+		    </if>
+		    <if test="phone != null" >
+		    	and phone like concat('%', #{phone,jdbcType=VARCHAR}, '%')
+		    </if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+	
+</mapper>

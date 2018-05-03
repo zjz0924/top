@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.TaskInfoDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.TaskInfo">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="applicant" property="applicant" jdbcType="VARCHAR" />
+		<result column="department" property="department" jdbcType="VARCHAR" />
+		<result column="figure" property="figure" jdbcType="VARCHAR" />
+		<result column="num" property="num" jdbcType="INTEGER" />
+		<result column="origin" property="origin" jdbcType="VARCHAR" />
+		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="provenance" property="provenance" jdbcType="VARCHAR" />
+		<result column="task_id" property="taskId" jdbcType="BIGINT" />
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, applicant, department, figure, num, origin, reason, provenance,
+		task_id
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from task_info where task_id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from task_info where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.TaskInfo">
+		insert into task_info (applicant, department, figure, num, origin, reason, provenance, task_id) values (#{applicant,jdbcType=VARCHAR},
+		#{department,jdbcType=VARCHAR}, #{figure,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{origin,jdbcType=VARCHAR},
+		#{reason,jdbcType=VARCHAR}, #{provenance,jdbcType=VARCHAR}, #{taskId,jdbcType=BIGINT}
+		)
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.TaskInfo">
+		update task_info
+		<set>
+			<if test="applicant != null">
+				applicant = #{applicant,jdbcType=VARCHAR},
+			</if>
+			<if test="department != null">
+				department = #{department,jdbcType=VARCHAR},
+			</if>
+			<if test="figure != null">
+				figure = #{figure,jdbcType=VARCHAR},
+			</if>
+			<if test="num != null">
+				num = #{num,jdbcType=INTEGER},
+			</if>
+			<if test="origin != null">
+				origin = #{origin,jdbcType=VARCHAR},
+			</if>
+			<if test="reason != null">
+				reason = #{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="provenance != null">
+				provenance = #{provenance,jdbcType=VARCHAR},
+			</if>
+			<if test="taskId != null">
+				task_id = #{taskId,jdbcType=BIGINT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" /> from task_info
+		<where>
+			<if test="applicant != null">
+				and applicant like concat('%', #{applicant,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="department != null">
+				and department like concat('%', #{department,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="reason != null">
+				and reason like concat('%', #{reason,jdbcType=VARCHAR}, '%')
+			</if>
+			
+			<if test="provenance != null">
+				and provenance like concat('%', #{provenance,jdbcType=VARCHAR}, '%')
+			</if>
+		</where>
+	
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+</mapper>

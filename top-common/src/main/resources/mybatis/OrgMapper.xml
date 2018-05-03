@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.OrgDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.Org">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="areaid" property="areaid" jdbcType="BIGINT" />
+		<result column="desc" property="desc" jdbcType="VARCHAR" />
+		<result column="addr" property="addr" jdbcType="VARCHAR" />
+		<result column="parentid" property="parentid" jdbcType="BIGINT" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<association property="parent" javaType="cn.wow.common.domain.Org" column="parentid" select="cn.wow.common.dao.OrgDao.selectOne"/> 
+		<association property="area" javaType="cn.wow.common.domain.Area" column="areaid" select="cn.wow.common.dao.AreaDao.selectOne"/> 
+		<collection property="subList" javaType="java.util.ArrayList" column="id" ofType="cn.wow.common.domain.Org" select="selectSubList"></collection>
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, name, code, areaid, `desc`, parentid, type, addr
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from org where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="getByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select <include refid="base_columns" /> from org where code = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 获取子节点 -->
+	<select id="selectSubList" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from org where parentid = #{id} order by name asc
+	</select>
+	
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from org where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.Org">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+		    SELECT @@IDENTITY
+		</selectKey>
+		insert into org (name, code, areaid, `desc`, parentid, type, addr)
+			values (#{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{areaid,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR}, #{parentid,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{addr,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.Org">
+		update org
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid != null">
+				areaid = #{areaid,jdbcType=BIGINT},
+			</if>
+			`desc` = #{desc,jdbcType=VARCHAR},
+			<if test="parentid != null">
+				parentid = #{parentid,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="addr != null">
+				addr = #{addr,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from org
+	     <where>
+			  <if test="name != null">
+				and name like concat('%', #{name,jdbcType=VARCHAR}, '%')
+			  </if>
+			  <if test="code != null">
+				and code like concat('%', #{code,jdbcType=VARCHAR}, '%')
+			  </if>
+			  <if test="parentid != null">
+				and parentid = #{parentid,jdbcType=BIGINT}
+			  </if>
+			  <if test="areaid != null">
+				and areaid = #{areaid,jdbcType=BIGINT}
+			  </if>
+			  <if test="type != null">
+				and type = #{type,jdbcType=INTEGER}
+			  </if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	  
+	  <select id="batchUpdate" parameterType="java.util.Map">
+			update org set type = #{type}
+			where id in
+			<foreach collection="list" item="item" index="index" separator=","
+				open="(" close=")">
+				#{item, jdbcType=BIGINT}
+			</foreach>
+		</select>
+
+</mapper>

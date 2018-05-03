@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.ApplyRecordDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.ApplyRecord">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="v_id" property="vId" jdbcType="BIGINT" />
+		<result column="p_id" property="pId" jdbcType="BIGINT" />
+		<result column="m_id" property="mId" jdbcType="BIGINT" />
+		<result column="t_id" property="tId" jdbcType="BIGINT" />
+		<result column="a_id" property="aId" jdbcType="BIGINT" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="pf_result_ids" property="pfResultIds" jdbcType="VARCHAR" />
+		<result column="atlas_result" property="atlasResult" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="confirm_time" property="confirmTime" jdbcType="TIMESTAMP" />
+		
+		<association property="task" javaType="cn.wow.common.domain.Task" column="t_id" select="cn.wow.common.dao.TaskDao.selectOne"/> 
+		
+	</resultMap>
+	
+	<sql id="base_columns">
+		r.id, r.v_id, r.p_id, r.m_id, r.t_id, r.a_id, r.state, r.pf_result_ids, r.atlas_result, r.type, r.remark,
+		r.create_time, r.confirm_time
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from apply_record r where r.id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<select id="getRecordByTaskId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" /> from apply_record r where r.t_id = #{taskId,jdbcType=BIGINT} and r.type = #{type,jdbcType=INTEGER} and r.state = 0
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from apply_record where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.ApplyRecord">
+		insert into apply_record (v_id, p_id, m_id, t_id, a_id, state, pf_result_ids, atlas_result, type, remark, create_time, confirm_time)
+		values (#{vId,jdbcType=BIGINT}, #{pId,jdbcType=BIGINT}, #{mId,jdbcType=BIGINT}, #{tId,jdbcType=BIGINT}, #{aId,jdbcType=BIGINT},
+		#{state,jdbcType=INTEGER}, #{pfResultIds,jdbcType=VARCHAR}, #{atlasResult,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{confirmTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	
+	<update id="update" parameterType="cn.wow.common.domain.ApplyRecord">
+		update apply_record
+		<set>
+			<if test="vId != null">
+				v_id = #{vId,jdbcType=BIGINT},
+			</if>
+			<if test="pId != null">
+				p_id = #{pId,jdbcType=BIGINT},
+			</if>
+			<if test="mId != null">
+				m_id = #{mId,jdbcType=BIGINT},
+			</if>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=BIGINT},
+			</if>
+			<if test="aId != null">
+				a_id = #{aId,jdbcType=BIGINT},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="pfResultIds != null">
+				pf_result_ids = #{pfResultIds,jdbcType=VARCHAR},
+			</if>
+			<if test="atlasResult != null">
+				atlas_result = #{atlasResult,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="confirmTime != null">
+				confirm_time = #{confirmTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+	  	select 
+	    <include refid="base_columns" />
+	      from apply_record r left join task t on t.id = r.t_id
+	     <where>
+	     	<if test="code != null and code != ''">
+				and t.code like concat('%', #{code,jdbcType=VARCHAR}, '%')
+			</if>
+			<if test="aId != null">
+				and r.a_id = #{aId,jdbcType=BIGINT}
+			</if>
+			<if test="state != null">
+				and r.state = #{state,jdbcType=INTEGER}
+			</if>
+			<if test="type != null">
+				and r.type = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and r.create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and r.create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="startConfirmTime != null and startConfirmTime != ''">
+				and r.confirm_time &gt;= #{startConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endConfirmTime != null and endConfirmTime != ''">
+				and r.confirm_time &lt;= #{endConfirmTime, jdbcType=TIMESTAMP}
+			</if>
+	      </where>
+	      
+		  <choose>
+	  		<when test="custom_order_sql != null">
+	  			order by ${custom_order_sql}
+	  		</when>
+	  		<otherwise>
+	  			order by r.id desc
+	  		</otherwise>
+	 	 </choose>
+	  </select>
+	
+</mapper>

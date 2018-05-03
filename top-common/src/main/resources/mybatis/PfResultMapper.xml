@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wow.common.dao.PfResultDao">
+	<resultMap id="BaseResultMap" type="cn.wow.common.domain.PfResult">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="t_id" property="tId" jdbcType="BIGINT" />
+		<result column="project" property="project" jdbcType="VARCHAR" />
+		<result column="standard" property="standard" jdbcType="VARCHAR" />
+		<result column="require" property="require" jdbcType="VARCHAR" />
+		<result column="result" property="result" jdbcType="VARCHAR" />
+		<result column="evaluate" property="evaluate" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="catagory" property="catagory" jdbcType="INTEGER" />
+		<result column="exp_no" property="expNo" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="base_columns">
+		id, t_id, project, standard, `require`, result, evaluate, remark, create_time, catagory, exp_no
+	</sql>
+	
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select <include refid="base_columns" /> from pf_result where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from pf_result where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="cn.wow.common.domain.PfResult">
+		insert into pf_result (t_id, project, standard, `require`, result, evaluate, remark, create_time, catagory, exp_no)
+			values (#{tId,jdbcType=BIGINT}, #{project,jdbcType=VARCHAR}, #{standard,jdbcType=VARCHAR}, #{require,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR},
+					#{evaluate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{catagory,jdbcType=INTEGER}, #{expNo,jdbcType=INTEGER})
+	</insert>
+	
+	<update id="update" parameterType="cn.wow.common.domain.PfResult">
+		update pf_result
+		<set>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=BIGINT},
+			</if>
+			<if test="project != null">
+				project = #{project,jdbcType=VARCHAR},
+			</if>
+			<if test="standard != null">
+				standard = #{standard,jdbcType=VARCHAR},
+			</if>
+			<if test="require != null">
+				`require` = #{require,jdbcType=VARCHAR},
+			</if>
+			<if test="result != null">
+				result = #{result,jdbcType=VARCHAR},
+			</if>
+			<if test="evaluate != null">
+				evaluate = #{evaluate,jdbcType=VARCHAR},
+			</if>
+			<if test="catagory != null">
+				catagory = #{catagory,jdbcType=INTEGER},
+			</if>
+			<if test="expNo != null">
+			 	exp_no = #{expNo,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select <include refid="base_columns" /> from pf_result
+		<where>
+			<if test="tId != null">
+				and t_id = #{tId,jdbcType=BIGINT}
+			</if>
+			<if test="startCreateTime != null and startCreateTime != ''">
+				and create_time &gt;= #{startCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="endCreateTime != null and endCreateTime != ''">
+				and create_time &lt;= #{endCreateTime, jdbcType=TIMESTAMP}
+			</if>
+			<if test="catagory != null">
+				and catagory = #{catagory,jdbcType=INTEGER}
+			</if>
+			<if test="expNo != null">
+			 	and exp_no = #{expNo,jdbcType=INTEGER}
+			</if>
+		</where>
+
+		<choose>
+			<when test="custom_order_sql != null">
+				order by ${custom_order_sql}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="batchAdd" parameterType="java.util.List">
+		insert into pf_result (t_id, project, standard, `require`, result, evaluate, remark, create_time, catagory, exp_no) values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.tId,jdbcType=BIGINT}, #{item.project,jdbcType=VARCHAR}, #{item.standard,jdbcType=VARCHAR}, #{item.require,jdbcType=VARCHAR}, 
+			 #{item.result,jdbcType=VARCHAR}, #{item.evaluate,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+			 #{item.catagory,jdbcType=INTEGER}, #{item.expNo,jdbcType=INTEGER})
+		</foreach>
+	</insert> 
+	
+	<!-- 获取试验次数 -->
+	<select id="getExpNoByCatagory"  resultType="int" parameterType="java.util.Map" >
+		select count(distinct exp_no) num from pf_result where t_id = #{taskId} and catagory = #{catagory}
+	</select>
+
+</mapper>

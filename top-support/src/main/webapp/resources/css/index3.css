@@ -1,0 +1,84 @@
+.navigation-up .navigation-v3 li{float:left; width:126px; height:73px;text-align:center;border-right:1px solid #cdcdcd;}
+.navigation-up .navigation-v3 li h2 a{ width:126px; height:49px; display:block; background:url(../../resources/img/bg_02.png) repeat-x; padding-top:24px;}
+.navigation-up .navigation-v3 li h2 a.ed{ width:137px;}
+
+/*主体样式*/
+.main{ width:100%; min-width:1280px;height:1272px; overflow:hidden; background:#7f7f7f;}
+.main_in{ width:1280px; height:1272px; margin:0 auto; overflow:hidden;}
+
+/*供应商培训管理系统样式*/
+.train{ width:489px; height:290px;}
+.train_title{ width:489px; }
+.train_title h2{ width:470px;}
+.train_con{ width:478px; height:213px; background:#fff url(../images/bg_23.png) no-repeat center; position:relative;}
+.train_con li.one{ position:absolute; top:40px; left:78px;}
+.train_con li.two{ position:absolute; top:40px; left:295px;}
+.train_con li.three{ position:absolute; top:130px; left:78px;}
+.train_con li.four{ position:absolute; top:130px; left:295px;}
+.train_con li a img{ width:104px; height:85px;}
+
+/*业务流程管理系统样式*/
+.process{ width:489px; height:402px;}
+.process_title{ width:489px; }
+.process_title h2{ width:470px;}
+.process_con{ width:478px; height:325px;}
+.process_con ul.le{ padding:50px 0 0 20px; float:left;}
+.process_con ul.le li{ float:none; padding:3px;}
+.process_con ul.le li.one a{ width:88px; height:35px; display:block; background:url(../images/img_18.png) no-repeat center;}
+.process_con ul.le li.one a:hover{background:url(../images/img_18_hover.png) no-repeat center;}
+.process_con ul.le li.two a{ width:88px; height:35px; display:block; background:url(../images/img_19.png) no-repeat center;}
+.process_con ul.le li.two a:hover{background:url(../images/img_19_hover.png) no-repeat center;}
+.process_con ul.le li.three a{ width:88px; height:35px; display:block; background:url(../images/img_20.png) no-repeat center;}
+.process_con ul.le li.three a:hover{background:url(../images/img_20_hover.png) no-repeat center;}
+.process_con ul.le li.four a{ width:88px; height:35px; display:block; background:url(../images/img_21.png) no-repeat center;}
+.process_con ul.le li.four a:hover{background:url(../images/img_21_hover.png) no-repeat center;}
+.process_con ul.le li.five a{ width:88px; height:35px; display:block; background:url(../images/img_22.png) no-repeat center;}
+.process_con ul.le li.five a:hover{background:url(../images/img_22_hover.png) no-repeat center;}
+.process_con div.ri{ width:362px; height:260px; margin-top:40px; background:url(../images/bg_27.png) no-repeat center 39% ; float:right; position:relative;}
+.process_con div.ri img.one{ cursor:pointer; position:absolute; top:39px; left:80px;}
+.process_con div.ri img.two{cursor:pointer;position:absolute; top:61px; left:21px;}
+.process_con div.ri img.three{cursor:pointer; position:absolute; top:125px; left:110px;}
+.process_con div.ri img.four{cursor:pointer; position:absolute; top:70px; left:245px;}
+.process_con div.ri img.five{cursor:pointer; position:absolute; top:40px; left:190px;}
+.process_con div.ri img.arrow{ position:absolute; top:90px; left:2px;}
+
+/*供应商能力管理系统样式*/
+.ability3{ width:489px; height:375px;}
+.ability3_title{ width:489px; }
+.ability3_title h2{ width:470px;}
+.ability3_con{ width:478px; height:298px;  position:relative;}
+.ability3_con i.one img{ position:absolute; top:150px; left:150px; }
+.ability3_con i.two img{ position:absolute; top:150px; left:305px; }
+.ability3_con a img{ width:113px; height:114px; z-index:5;}
+.ability3_con a.one img{ position:absolute; top:100px; left:30px;}
+.ability3_con a.two img{ position:absolute; top:100px; left:190px;}
+.ability3_con a.three img{ position:absolute; top:100px; left:340px;}
+
+/*供应商交流管理系统样式*/
+.communication{ width:489px; height:455px;}
+.communication_title{ width:489px; }
+.communication_title h2{ width:470px;}
+.communication_con{ width:478px; height:378px; display:block; background:#fff url(../images/bg_26.png) no-repeat top; position:relative;}
+.communication_con p.one{ font-size:14px; display:block; cursor:pointer;height:16px; line-height:16px; padding-left:5px; padding-right:5px;position:absolute; top:94px; left:38px; border-left:5px solid #f1a353;}
+.communication_con p.two{ font-size:14px; display:block; cursor:pointer;height:16px; line-height:16px; padding-left:5px; padding-right:5px;position:absolute; top:50px; left:157px; border-left:5px solid #cd586d;}
+.communication_con p.three{ font-size:14px; display:block; cursor:pointer;height:16px; line-height:16px; padding-left:5px; padding-right:5px;position:absolute; top:80px; left:237px; border-left:5px solid #342f31;}
+.communication_con p.four{ font-size:14px; display:block; cursor:pointer;height:16px; line-height:16px; padding-left:5px; padding-right:5px;position:absolute; top:80px; left:371px; border-left:5px solid #4b9bab;}
+.communication_con p.five{ font-size:14px; display:block; cursor:pointer;height:16px; line-height:16px; padding-left:5px; padding-right:5px;position:absolute; top:240px; left:134px; border-left:5px solid #b066b4;}
+
+/*主体右部样式*/
+.main_in_ri{ width:285px; height:1252px; float:right; overflow:hidden; background:#d9d9d9; margin-top:10px;}
+
+/*快速导航样式*/
+.fastnav{ width:251px; height:1211px; margin:8px 0 0 6px; background:#e7e7e7; padding:25px 0 0 20px;}
+.fastnav_in{ position:relative;}
+.fastnav_in div.fudong{ width:241px; position:absolute;}
+.fastnav_in div.fudong h2{ width:214px; height:41px; background:url(../images/bg_24.png) no-repeat center; line-height:41px; font-weight:normal; padding-left:20px;}
+.fastnav_in div.fudong h2 i{ font-style:normal; float:right; padding-right:20px;}
+.fastnav_in div.fudong ul{ }
+.fastnav_in div.fudong ul li { width:236px; height:44px; background:url(../images/bg_25.png) no-repeat center; margin-top:20px;}
+.fastnav_in div.fudong ul li a{width:196px; height:44px; display:block; background:url(../images/icon_09.png) no-repeat 8% center; padding-left:40px; line-height:44px;}
+.fastnav_in div.fudong ul li a:hover{background:url(../images/icon_10.png) no-repeat 8% center; padding-left:50px; width:186px;}
+.fastnav_in div.fudong div{ }
+.fastnav_in div.fudong div img{ cursor:pointer; padding-bottom:20px;}
+.fastnav_in .gundong{  }
+.fastnav_in .ding{ top:590px; }
